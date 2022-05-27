@@ -11,3 +11,37 @@ We could:
 - autogenerate solidity interface definitions for export
 
 Just some ideas.
+
+Maybe we will have this CLI:
+
+```
+snek info
+  print info about snek and vyper
+  if you are in a snek repo, also print info about that
+
+snek init [name]
+  initialize `snek.jams`, `core/`, `dist/`, and `test/` in this repo,
+  or in a new repo in the given name if provided.
+  **You don't need to do this** -- by default, snek
+  will use the root folder for all three.
+
+snek make [regex(es)]
+  compile all vyper contracts in source folder,
+  or just the ones matching the regex(es)
+
+snek test [regex(es)]
+  Compile and test all vyper contracts in source and test folders,
+  or just the ones matching the regex(es).
+  See `snektest` for more info on test harness.
+```
+
+`snek.jams` has the following fields, this shows result of `snek init`.
+All of them default to `.`, the current directory.
+
+```
+{
+  coredir "core"
+  distdir "dist"
+  testdir "test"
+}
+```
