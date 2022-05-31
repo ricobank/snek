@@ -1,27 +1,51 @@
 # snek
 ## the tiny vyper helper command
 
-Stupider is smarter is sweeping the globe.
-Maybe we will make a tiny tool to help write vyper programs.
-
-We could:
-- borrow some verbs from [minihat](https://github.com/nmushegian/minihat)
-- port [ds-test](https://github.com/dapphub/ds-test) for VM level tests
-- autogenerate solidity interface definitions for export
-- make a @load macro using locked dpath for inlining files from dmap/ipfs
-
-Just some ideas.
-
-Maybe we will have this CLI:
 
 ```
-snek make [regex(es)]
+snek make
   compile all vyper contracts in source folder,
-  or just the ones matching the regex(es)
+snek test
+  compile and test all vyper contracts in source and test folders
+```
 
-snek test [regex(es)]
-  Compile and test all vyper contracts in source and test folders,
-  or just the ones matching the regex(es).
-  See `snektest` for more info on test harness.
+
+### Plan of attack
+
+```
+snek test
+  we want test contracts to work like this:
+
+      def __init__(snek : Snek):
+          self.coin = snek.make('Coin', 'rico')
+          self.size = 'with'
+
+      def testSize():
+          assert self.coin.balanceOf(self) == 0
+          assert self.size == 'with'
+
+      event Transfer(...)
+      def testEvent():
+          log echo()
+          log Transfer(...)
+          self.coin.transfer(...)
+
+  make multifab
+    add - add a type (bytecode)
+    new - create new instance (codehash -> new address)
+
+  make snektest helper
+    _bind(typename, bytecode) - pretest setup, add the types for user
+    make(typename, objectname) - get new instance
+
+  make snek.js test harness
+    - compile all contracts
+    - deploy multifab
+    - put all types in multifab
+    - deploy snek
+    - for each test contract
+        - deploy it
+        - call each test function
+        - for each echo event, check events match
 ```
 
