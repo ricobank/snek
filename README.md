@@ -7,6 +7,8 @@ snek make
   compile all vyper contracts in source folder,
 snek test
   compile and test all vyper contracts in source and test folders
+snek help
+  print a long help message with examples
 ```
 
 
