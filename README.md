@@ -51,3 +51,6 @@ snek test
         - for each echo event, check events match
 ```
 
+### Installation
+
+Requires [vyper](https://github.com/vyperlang/vyper) to be [installed](https://vyper.readthedocs.io/en/latest/installing-vyper.html).

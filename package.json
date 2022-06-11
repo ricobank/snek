@@ -1,0 +1,21 @@
+{
+  "name": "snek",
+  "version": "0.0.1",
+  "description": "snek",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./index.js make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricobank/snek.git"
+  },
+  "author": "",
+  "license": "",
+  "homepage": "https://github.com/ricobank/snek#readme",
+  "dependencies": {
+    "commander": "^9.3.0",
+    "ethers": "^5.6.8",
+    "ganache": "^7.2.0"
+  }
+}
