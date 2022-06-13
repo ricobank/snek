@@ -12,7 +12,8 @@ program
 
 program.command('make')
     .description('compile all vyper contracts in source folder')
-    .action(() => { make() })
+    .argument('[src_path]', 'path to vyper file(s) to compile', 'src/**.vy')
+    .action((src_path) => { make(src_path) })
 
 program.command('test')
     .description('compile and test all vyper contracts in source and test folders')
@@ -22,8 +23,8 @@ program.command('help')
     .description('print a long help message with examples')
     .action(() => { console.log('snek uses vyper to compile contract, you need to install it with pip first') })
 
-const make = () => {
-    vyper.compile(false)
+const make = (path) => {
+    vyper.compile(path)
 }
 
 const test = () => {

@@ -3,9 +3,9 @@ const process = require('node:process')
 
 module.exports = vy = {}
 
-vy.compile = (build_test) => {
+vy.compile = (path, build_test=false) => {
     try {
-        const stdout = execSync(`vyper -f abi,bytecode FILES_PATTERN_TODO`, { encoding: 'utf8' })
+        const stdout = execSync(`vyper -f abi,bytecode ${path}`, { encoding: 'utf8' })
         console.log(stdout)
     } catch (err) {
         const { status, stderr } = err;
