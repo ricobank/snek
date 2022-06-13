@@ -18,7 +18,7 @@ program.command('make')
 program.command('test')
     .description('compile and test all vyper contracts in source and test folders')
     .argument('[src_path]', 'path to vyper source file(s) to compile', 'src/**.vy')
-    .argument('[test_path]', 'path to test files', 'test/**.vy')
+    .argument('[test_path]', 'path to test files', 'test/**.t.vy')
     .action((src_path, test_path) => { test(src_path, test_path) })
 
 program.command('help')
