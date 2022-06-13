@@ -17,18 +17,25 @@ program.command('make')
 
 program.command('test')
     .description('compile and test all vyper contracts in source and test folders')
-    .action(() => { test() })
+    .argument('[src_path]', 'path to vyper source file(s) to compile', 'src/**.vy')
+    .argument('[test_path]', 'path to test files', 'test/**.vy')
+    .action((src_path, test_path) => { test(src_path, test_path) })
 
 program.command('help')
     .description('print a long help message with examples')
     .action(() => { console.log('snek uses vyper to compile contract, you need to install it with pip first') })
 
 const make = (path) => {
-    vyper.compile(path)
+    contracts = vyper.compile(path)
+    console.log(contracts)
+    return contracts
 }
 
-const test = () => {
-    make(true)
+const test = (src_path, test_path) => {
+    contracts = make(src_path)
+    tests = make(test_path)
+    console.log(contracts)
+    console.log(tests)
     const provider = new ethers.providers.Web3Provider(ganache.provider())
     console.log(provider)
 }
