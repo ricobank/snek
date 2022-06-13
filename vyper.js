@@ -7,7 +7,7 @@ vy.compile = (path) => {
     const outs = []
     try {
         const stdout = execSync(`vyper -f abi,bytecode ${path}`, { encoding: 'utf8' })
-        compilation_results = stdout.split("\n").slice(0, -1).forEach((element, index, array) => {
+        stdout.split("\n").slice(0, -1).forEach((element, index, array) => {
             if (index % 2 == 0) outs.push({abi: element, bytecode: array[index+1]})
         });
         return outs
