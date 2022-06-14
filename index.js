@@ -23,7 +23,7 @@ program.command('test')
 
 program.command('help')
     .description('print a long help message with examples')
-    .action(() => { console.log('snek uses vyper to compile contract, you need to install it with pip first') })
+    .action(() => { console.log('snek uses vyper to compile contracts, you need to install it with pip first') })
 
 const make = (path) => {
     contracts = vyper.compile(path)
