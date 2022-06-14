@@ -4,6 +4,10 @@
   "description": "snek",
   "main": "index.js",
   "scripts": {
+    "initialize": "npm i && npm run download-submodules && npm run install-submodules",
+    "download-submodules": "git submodule update --init --recursive --remote",
+    "install-submodules": "npm run init:multifab",
+    "init:multifab": "cd lib/multifab && npm i",
     "test": "node ./index.js make"
   },
   "repository": {
