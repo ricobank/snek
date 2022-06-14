@@ -1,9 +1,8 @@
-const ethers = require('ethers');
-const ganache = require("ganache")
 const { Command } = require('commander')
 const program = new Command()
 
-const vyper = require('./vyper.js')
+const vyper = require('./src/vyper.js')
+const runner = require('./src/runner.js')
 
 program
     .name('snek')
@@ -31,10 +30,9 @@ const make = (path, output_dir) => {
 }
 
 const test = (src_path, test_path, output_dir) => {
-    contracts = make(src_path, output_dir)
-    tests = make(test_path, output_dir)
-    const provider = new ethers.providers.Web3Provider(ganache.provider())
-    console.log(provider)
+    make(src_path, output_dir)
+    make(test_path, output_dir)
+    runner.run()
 }
 
 program.parse();
