@@ -1,16 +1,20 @@
 const execSync = require('node:child_process').execSync
 const process = require('node:process')
+const fs = require('fs')
 
 module.exports = vy = {}
 
-vy.compile = (path) => {
-    const outs = []
+vy.compile = (path, outputDir) => {
     try {
-        const stdout = execSync(`vyper -f abi,bytecode ${path}`, { encoding: 'utf8' })
-        stdout.split("\n").slice(0, -1).forEach((element, index, array) => {
-            if (index % 2 == 0) outs.push({abi: element, bytecode: array[index+1]})
-        });
-        return outs
+        console.log(`Compiling contracts in ${path} to ${outputDir}`)
+        if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir)
+        if (fs.lstatSync(path).isFile()) execSync(`vyper -f abi,bytecode ${path} -o ${outputDir}/${path.split("/").slice(-1)}.snek`, { encoding: 'utf8' })
+        if (fs.lstatSync(path).isDirectory()) fs.readdirSync(path).filter((c) => c.endsWith('.vy')).forEach((c) => {
+                execSync(`vyper -f abi,bytecode ${path}/${c} -o ${outputDir}/${c.split("/").slice(-1)}.snek`, { encoding: 'utf8' })
+        })
+        else {
+            console.error(`Invalid path ${path}. Path to contracts must be file or directory.`)
+        }
     } catch (err) {
         const { status, stderr } = err;
         if (status > 0 || (stderr && stderr.toLowerCase().includes('warning'))) {
