@@ -8,7 +8,7 @@ const vyper = require('./vyper.js')
 program
     .name('snek')
     .description('vyper helper command')
-    .option("-o|--output-dir", 'directory to output compiled contracts to', './out')
+    .option("-o,--output-dir <string>", 'directory to output compiled contracts to', './out')
     .version('0.0.1')
 
 program.command('make')
@@ -20,7 +20,7 @@ program.command('test')
     .description('compile and test all vyper contracts in source and test folders')
     .argument('[src_path]', 'path to vyper source file(s) to compile', 'src/')
     .argument('[test_path]', 'path to test files', 'test/')
-    .action((src_path, test_path) => { test(src_path, test_path, program.opts.outputDir) })
+    .action((src_path, test_path) => { test(src_path, test_path, program.opts().outputDir) })
 
 program.command('help')
     .description('print a long help message with examples')
