@@ -3,10 +3,14 @@ const process = require('node:process')
 
 module.exports = vy = {}
 
-vy.compile = (build_test) => {
+vy.compile = (path) => {
+    const outs = []
     try {
-        const stdout = execSync(`vyper -f abi,bytecode FILES_PATTERN_TODO`, { encoding: 'utf8' })
-        console.log(stdout)
+        const stdout = execSync(`vyper -f abi,bytecode ${path}`, { encoding: 'utf8' })
+        stdout.split("\n").slice(0, -1).forEach((element, index, array) => {
+            if (index % 2 == 0) outs.push({abi: element, bytecode: array[index+1]})
+        });
+        return outs
     } catch (err) {
         const { status, stderr } = err;
         if (status > 0 || (stderr && stderr.toLowerCase().includes('warning'))) {
