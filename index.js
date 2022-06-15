@@ -25,14 +25,14 @@ program.command('help')
     .description('print a long help message with examples')
     .action(() => { console.log('snek uses vyper to compile contracts, you need to install it with pip first') })
 
-const make = (path, output_dir) => {
-    vyper.compile(path, output_dir)
+const make = (path, output_dir, is_src=true) => {
+    vyper.compile(path, output_dir, is_src)
 }
 
 const test = (src_path, test_path, output_dir) => {
     make(src_path, output_dir)
-    make(test_path, output_dir)
-    runner.run()
+    make(test_path, output_dir, false)
+    runner.run(output_dir)
 }
 
 program.parse();
