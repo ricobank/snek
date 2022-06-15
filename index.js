@@ -32,6 +32,7 @@ const make = (path, output_dir, is_src=true) => {
 const test = (src_path, test_path, output_dir) => {
     make(src_path, output_dir)
     make(test_path, output_dir, false)
+    // TODO: !DMFXYZ! Need to compile snek.vy as well 
     runner.run(output_dir)
 }
 
