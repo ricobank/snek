@@ -4,7 +4,7 @@ const fs = require('fs')
 
 module.exports = vy = {}
 
-vy._generate_json = (files, path, outputDir, id) => {
+vy._generate_json = (files, path, outputDir, id, isDir=true) => {
     const project = {
         "language": "Vyper",
         "sources": {
@@ -18,29 +18,30 @@ vy._generate_json = (files, path, outputDir, id) => {
             }
         }
     }
-
+    const isdir = fs.lstatSync(path).isDirectory()
     for( const file of files ) {
+        console.log(`${file} !!`)
         if (!file.endsWith('.vy')) continue
-        const content = fs.readFileSync(`${path}/${file}`, {encoding: 'utf-8'})
-        project['sources'][`${path}/${file}`] = {'content': content}
+        const src_path = isdir ? `${path}/${file}` : file
+        const content = fs.readFileSync(src_path, {encoding: 'utf-8'})
+        project['sources'][src_path] = {'content': content}
     }
-
+    console.log(project)
     const show =(o)=> JSON.stringify(o, null, 2)
     fs.writeFileSync(outputDir + `/${id}Input.json`, show(project))
 }
 
-vy.compile = (path, outputDir, isSrc) => {
+vy.compile = (path, outputDir, outputId) => {
     console.log(`Compiling contracts in ${path} to ${outputDir}`)
     const files = []
-    const id = isSrc ? 'Src' : 'Test'
     try {
         if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir)
         if (fs.lstatSync(path).isFile()) files.push(path)
         else if (fs.lstatSync(path).isDirectory()) files.push(...(fs.readdirSync(path)))
         else throw `Invalid path ${path}. Path to contracts must be file or directory.`
 
-        vy._generate_json(files, path, outputDir, id)
-        execSync(`vyper-json ${outputDir}/${id}Input.json -o ${outputDir}/${id}Output.json`, {encoding: 'utf-8'})
+        vy._generate_json(files, path, outputDir, outputId)
+        execSync(`vyper-json ${outputDir}/${outputId}Input.json -o ${outputDir}/${outputId}Output.json`, {encoding: 'utf-8'})
     } catch (err) {
         const { status, stderr } = err;
         if (status > 0 || (stderr && stderr.toLowerCase().includes('warning'))) {
