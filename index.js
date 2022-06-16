@@ -32,8 +32,8 @@ const make = (path, output_dir, output_id) => {
 const test = (src_path, test_path, output_dir) => {
     make(src_path, output_dir, 'Src')
     make(test_path, output_dir, 'Test')
+    // TODO: !DMFXYZ! should the user be able to provide a custom snek.vy?
     make('snek.vy', output_dir, 'Snek')
-    // TODO: !DMFXYZ! Need to compile snek.vy as well 
     runner.run(output_dir)
 }
 
