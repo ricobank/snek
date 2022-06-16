@@ -4,7 +4,7 @@ const fs = require('fs')
 
 module.exports = vy = {}
 
-vy._generate_json = (files, path, outputDir, id, isDir=true) => {
+vy._generate_json = (files, path, outputDir, id) => {
     const project = {
         "language": "Vyper",
         "sources": {
@@ -20,13 +20,11 @@ vy._generate_json = (files, path, outputDir, id, isDir=true) => {
     }
     const isdir = fs.lstatSync(path).isDirectory()
     for( const file of files ) {
-        console.log(`${file} !!`)
         if (!file.endsWith('.vy')) continue
         const src_path = isdir ? `${path}/${file}` : file
         const content = fs.readFileSync(src_path, {encoding: 'utf-8'})
         project['sources'][src_path] = {'content': content}
     }
-    console.log(project)
     const show =(o)=> JSON.stringify(o, null, 2)
     fs.writeFileSync(outputDir + `/${id}Input.json`, show(project))
 }
