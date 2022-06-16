@@ -26,7 +26,7 @@
 interface Multifab:
     def cache(code :Bytes[20000000]) -> bytes32:  # max size, typed as `bytes` in ABI
         nonpayable
-    def build(hash :bytes32) -> address:
+    def build(hash :bytes32, args :Bytes[20000000]) -> address:
         nonpayable
 
 fab: Multifab
