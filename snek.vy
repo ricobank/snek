@@ -29,18 +29,20 @@ interface Multifab:
     def build(hash :bytes32) -> address:
         nonpayable
 
+fab: Multifab
+type_hashes: HashMap[String[32], bytes32]
 
 @external
 def __init__(fab :address):
     """ fab is a multifab initialized with types from this snek project """
-    pass
+    self.fab = Multifab(fab)
 
 @external
-def _bind(typename :String[32], hash :bytes32):
+def _bind(typename :String[32], _hash :bytes32):
     """ _bind is called by this test framework to associate typenames with
         codehashes so that `snek.make` can use a string typename
     """
-    pass
+    self.type_hashes[typename] = _hash
 
 @external
 def make(typename :String[32], objectname :String[32]) -> address:
