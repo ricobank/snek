@@ -11,10 +11,10 @@ runner.run = async (output_dir) => {
     const multifab_pack = require('../lib/multifab/pack/multifab_full_hardhat.dpack.json')
     const dapp = await dpack.load(multifab_pack, ethers, signer)
     const multifab = await dapp._types.Multifab.deploy()
-    const abs_path = resolve(`${output_dir}/SrcOutput.json`);
-    const src_output = require(abs_path)
+    const src_output = require(resolve(`${output_dir}/SrcOutput.json`))
     const src_contracts = Object.values(src_output.contracts)
     const deploy_info = {}
+    // Add Src Contracts to Multifab
     // not forEach because need to have all promises resolve
     for (contract of src_contracts) {
         const contract_name = Object.keys(contract)[0]
@@ -23,5 +23,15 @@ runner.run = async (output_dir) => {
         [,codehash] = cache_tx.events.find(event => event.event === 'Added').args
         deploy_info[contract_name] = { codehash: codehash}
     }
+    // Deploy Snek (should we just do this via multifab?)
+    const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
+    const snek_contract = Object.values(snek_output.contracts)[0]['snek']
+
+    // broken, need to convert abi to interface
+    const snek_factory = ethers.ContractFactory(snek_contract.abi, snek_contract.evm.bytecode.object)
+
+    // TODO: !DMFXYZ! Just logging for now for sanity checks
+    console.log(snek_contract)
+    console.log(snek_factory)
     console.log(deploy_info)
 }
