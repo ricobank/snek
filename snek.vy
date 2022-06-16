@@ -30,7 +30,7 @@ interface Multifab:
         nonpayable
 
 fab: Multifab
-types: HashMap[String[32], bytes32]
+types: public(HashMap[String[32], bytes32])
 objects: public(HashMap[String[32], address])
 
 @external
