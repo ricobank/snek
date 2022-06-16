@@ -26,12 +26,10 @@ runner.run = async (output_dir) => {
     // Deploy Snek (should we just do this via multifab?)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
     const snek_contract = Object.values(snek_output.contracts)[0]['snek']
-
-    // broken, need to convert abi to interface
-    const snek_factory = ethers.ContractFactory(snek_contract.abi, snek_contract.evm.bytecode.object)
+    const snek_factory = new ethers.ContractFactory(new ethers.utils.Interface(snek_contract.abi), snek_contract.evm.bytecode.object, signer)
+    const snek = await snek_factory.deploy(multifab.address)
 
     // TODO: !DMFXYZ! Just logging for now for sanity checks
-    console.log(snek_contract)
-    console.log(snek_factory)
     console.log(deploy_info)
+    console.log(snek)
 }
