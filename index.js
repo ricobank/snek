@@ -1,3 +1,4 @@
+const { resolve } = require('path');
 const { Command } = require('commander')
 const program = new Command()
 
@@ -33,7 +34,7 @@ const test = (src_path, test_path, output_dir) => {
     make(src_path, output_dir, 'Src')
     make(test_path, output_dir, 'Test')
     // TODO: !DMFXYZ! should the user be able to provide a custom snek.vy?
-    make('snek.vy', output_dir, 'Snek')
+    make(resolve(__dirname, './snek.vy'), output_dir, 'Snek')
     runner.run(output_dir)
 }
 
