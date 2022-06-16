@@ -26,7 +26,10 @@ vy._generate_json = (files, path, outputDir, id, isDir=true) => {
         const content = fs.readFileSync(src_path, {encoding: 'utf-8'})
         project['sources'][src_path] = {'content': content}
     }
+<<<<<<< HEAD
     console.log(project)
+=======
+>>>>>>> dmfxyz/fix-single-file-compilation
     const show =(o)=> JSON.stringify(o, null, 2)
     fs.writeFileSync(outputDir + `/${id}Input.json`, show(project))
 }
