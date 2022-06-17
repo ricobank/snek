@@ -30,7 +30,7 @@ describe('test snek', () => {
     it('should bind hash correctly', async() => {
         const test_type = "test_type"
         const test_hash = ethers.utils.formatBytes32String("testhash")
-        await snek._bind(test_type, test_hash)
+        await snek.bind(test_type, test_hash)
         want(await snek.types(test_type)).to.eql(test_hash)
     })
 
