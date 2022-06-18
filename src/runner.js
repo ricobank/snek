@@ -17,7 +17,6 @@ runner.run = async (output_dir) => {
     const tst_output = require(resolve(`${output_dir}/TestOutput.json`))
     const src_contracts = Object.values(src_output.contracts).map((obj) => Object.entries(obj)[0])
     const tst_contracts = Object.values(tst_output.contracts).map((obj) => Object.entries(obj)[0])
-    const deploy_info = {}
 
     // Deploy Snek (should we just do this via multifab?)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
@@ -26,13 +25,10 @@ runner.run = async (output_dir) => {
     const snek_factory = new ethers.ContractFactory(snek_interface, snek_contract.evm.bytecode.object, signer)
     const snek = await snek_factory.deploy(multifab.address)
 
-    // Add Src Contracts to Multifab
-    // not forEach because need to have all promises resolve
     for ([contract_name, contract] of src_contracts) {
         const cache_tx = await send(multifab.cache, contract.evm.bytecode.object);
         [,codehash] = cache_tx.events.find(event => event.event === 'Added').args
         await send(snek.bind, contract_name, codehash)
-        deploy_info[contract_name] = { codehash: codehash}
     }
 
     for ([contract_name, contract] of tst_contracts) {
