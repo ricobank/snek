@@ -39,7 +39,7 @@ def __init__(fab :address):
     self.fab = Multifab(fab)
 
 @external
-def bind(typename :String[32], _hash :bytes32):
+def _bind(typename :String[32], _hash :bytes32):
     """ _bind is called by this test framework to associate typenames with
         codehashes so that `snek.make` can use a string typename
     """

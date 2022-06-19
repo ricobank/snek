@@ -15,8 +15,9 @@ runner.run = async (output_dir) => {
     const multifab = await dapp._types.Multifab.deploy()
     const src_output = require(resolve(`${output_dir}/SrcOutput.json`))
     const tst_output = require(resolve(`${output_dir}/TestOutput.json`))
-    const src_contracts = Object.values(src_output.contracts).map((obj) => Object.entries(obj)[0])
-    const tst_contracts = Object.values(tst_output.contracts).map((obj) => Object.entries(obj)[0])
+    const strip_proto = obj => Object.entries(obj)[0]
+    const src_contracts = Object.values(src_output.contracts).map(obj => strip_proto(obj))
+    const tst_contracts = Object.values(tst_output.contracts).map(obj => strip_proto(obj))
 
     // Deploy Snek (should we just do this via multifab?)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
@@ -28,7 +29,7 @@ runner.run = async (output_dir) => {
     for ([contract_name, contract] of src_contracts) {
         const cache_tx = await send(multifab.cache, contract.evm.bytecode.object);
         [,codehash] = cache_tx.events.find(event => event.event === 'Added').args
-        await send(snek.bind, contract_name, codehash)
+        await send(snek._bind, contract_name, codehash)
     }
 
     for ([contract_name, contract] of tst_contracts) {

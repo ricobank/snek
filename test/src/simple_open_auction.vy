@@ -1,3 +1,5 @@
+# copied from (will be replaced) https://github.com/vyperlang/vyper/tree/master/examples/auctions
+
 # Open Auction
 
 # Auction params

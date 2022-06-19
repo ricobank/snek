@@ -1,3 +1,5 @@
+# copied from (will be replaced) https://github.com/vyperlang/vyper/tree/master/examples/auctions
+
 # Blind Auction # Adapted to Vyper from [Solidity by Example](https://github.com/ethereum/solidity/blob/develop/docs/solidity-by-example.rst#blind-auction-1)
 
 struct Bid:
