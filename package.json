@@ -8,7 +8,7 @@
     "download-submodules": "git submodule update --init --recursive --remote",
     "install-submodules": "npm run init:multifab",
     "init:multifab": "cd lib/multifab && npm i && npm run test",
-    "test": "cd test && node ../index.js make",
+    "test": "cd test && node ../index.js test",
     "test-snek": "npx mocha test test/snek"
   },
   "repository": {
