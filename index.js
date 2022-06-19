@@ -14,7 +14,7 @@ program
 program.command('make')
     .description('compile all vyper contracts in source folder')
     .argument('[src_path]', 'path to vyper file(s) to compile', 'src/')
-    .action((src_path) => { make(src_path, program.opts().outputDir) })
+    .action((src_path) => { make(src_path, program.opts().outputDir, 'Src') })
 
 program.command('test')
     .description('compile and test all vyper contracts in source and test folders')
@@ -33,7 +33,6 @@ const make = (path, output_dir, output_id) => {
 const test = (src_path, test_path, output_dir) => {
     make(src_path, output_dir, 'Src')
     make(test_path, output_dir, 'Test')
-    // TODO: !DMFXYZ! should the user be able to provide a custom snek.vy?
     make(resolve(__dirname, './snek.vy'), output_dir, 'Snek')
     runner.run(output_dir)
 }
