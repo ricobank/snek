@@ -32,6 +32,8 @@ runner.run = async (output_dir) => {
         await send(snek._bind, contract_name, codehash)
     }
 
+    let ran = 0
+    let passed = 0
     for ([contract_name, contract] of tst_contracts) {
         const iface = new ethers.utils.Interface(contract.abi)
         const factory = new ethers.ContractFactory(iface, contract.evm.bytecode.object, signer)
@@ -39,7 +41,9 @@ runner.run = async (output_dir) => {
         for (const func of contract.abi) {
             if ('name' in func && func.name.startsWith('test')) {
                 try {
+                    ran++
                     await send(test[func.name])
+                    passed++
                     console.log(`${contract_name}::${func.name} ${chalk.green('PASSED')}`)
                 } catch (e) {
                     console.log(`${contract_name}::${func.name} ${chalk.red('FAILED')}`,)
@@ -48,4 +52,6 @@ runner.run = async (output_dir) => {
             }
         }
     }
+    const format = ran === passed ? chalk.green : chalk.red
+    console.log(`Passed ${format(`${passed}/${ran}`)}`)
 }

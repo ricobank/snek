@@ -51,5 +51,5 @@ vy.compile = (path, outputDir, outputId) => {
         }
         process.exit(1);
     }
-    console.log(`Successfully compiled .vy contracts in ${path}. ${std_out}`)
+    console.log(`Successfully compiled .vy contracts in ${path}. ${std_out.trim()}`)
 }
