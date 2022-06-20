@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0
-# Adapated from https://github.com/ricobank/multifab/blob/main/core/test/person.sol
+# Adapted from https://github.com/ricobank/multifab/blob/main/core/test/person.sol
 first_name :public(String[32])
 last_name :public(String[32])
 birth_year :public(uint256)

@@ -46,10 +46,8 @@ describe('test snek', () => {
         want(await snek.types('person')).to.eql(person_hash)
 
         const person_args = ethers.utils.defaultAbiCoder.encode(['string', 'string', 'uint256'], ["Rico", "Bank", 2022])
-        const made = await send(snek.make, 'person', 'person1', person_args, { gasLimit: gasLimit })
-        // The event name is lost when called from Snek contract, so indexing directly
-        // TODO: !DMFXYZ! why is event name lost?      
-        const person_address = `0x` + made.events[0].topics[2].slice(26)
+        await send(snek.make, 'person', 'person1', person_args, { gasLimit: gasLimit })
+        const person_address = await snek.objects('person1')
         const person = new ethers.Contract(person_address, person_contract.abi, signer)
         want(await person.first_name()).to.eql("Rico")
         want(await person.last_name()).to.eql("Bank")
