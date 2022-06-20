@@ -46,7 +46,7 @@ def _bind(typename :String[32], _hash :bytes32):
     self.types[typename] = _hash
 
 @external
-def make(typename :String[32], objectname :String[32], args :Bytes[20000000]) -> address:
+def make(typename :String[32], objectname :String[32], args :Bytes[3200]) -> address:
     """ make calls `fab.build` with the right codehash based on typename,
         then it saves the object with the given objectname for reference
     """
