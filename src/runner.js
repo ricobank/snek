@@ -10,7 +10,7 @@ runner.run = async (output_dir) => {
     const options = { logging: { quiet: "true"}}
     const provider = new ethers.providers.Web3Provider(ganache.provider(options))
     const signer = provider.getSigner()
-    const multifab_pack = require('../lib/multifab/pack/multifab_full_hardhat.dpack.json')
+    const multifab_pack = require('../lib/multifab/pack/multifab_hardhat.dpack.json')
     const dapp = await dpack.load(multifab_pack, ethers, signer)
     const multifab = await dapp._types.Multifab.deploy()
     const src_output = require(resolve(`${output_dir}/SrcOutput.json`))
