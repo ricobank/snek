@@ -15,7 +15,7 @@ describe('test snek', () => {
         vyper.compile('snek.vy', dir, 'Snek')
         const provider = new ethers.providers.Web3Provider(ganache.provider())
         signer = provider.getSigner()
-        const multifab_pack = require('../../lib/multifab/pack/multifab_full_hardhat.dpack.json')
+        const multifab_pack = require('../../lib/multifab/pack/multifab_hardhat.dpack.json')
         const dapp = await dpack.load(multifab_pack, ethers, signer)
         multifab = await dapp._types.Multifab.deploy()
 
