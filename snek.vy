@@ -26,28 +26,34 @@
 interface Multifab:
     def cache(code :Bytes[20000000]) -> bytes32:  # max size, typed as `bytes` in ABI
         nonpayable
-    def build(hash :bytes32) -> address:
+    def build(hash :bytes32, args :Bytes[20000000]) -> address:
         nonpayable
 
+fab: Multifab
+types: public(HashMap[String[32], bytes32])
+objects: public(HashMap[String[32], address])
 
 @external
 def __init__(fab :address):
     """ fab is a multifab initialized with types from this snek project """
-    pass
+    self.fab = Multifab(fab)
 
 @external
-def _bind(typename :String[32], hash :bytes32):
+def _bind(typename :String[32], _hash :bytes32):
     """ _bind is called by this test framework to associate typenames with
         codehashes so that `snek.make` can use a string typename
     """
-    pass
+    self.types[typename] = _hash
 
 @external
-def make(typename :String[32], objectname :String[32]) -> address:
-    """ make calls `fab.new` with the right codehash based on typename,
+def make(typename :String[32], objectname :String[32], args :Bytes[3200]) -> address:
+    """ make calls `fab.build` with the right codehash based on typename,
         then it saves the object with the given objectname for reference
     """
-    raise "unimplemented"
+    type_hash :bytes32 = self.types[typename]
+    _object :address = self.fab.build(type_hash, args)
+    self.objects[objectname] = _object
+    return _object
 
 @external
 def echo(target :address):

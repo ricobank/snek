@@ -33,8 +33,8 @@ snek test
           self.coin.transfer(...)
 
   make multifab
-    add - add a type (bytecode)
-    new - create new instance (codehash -> new address)
+    cache - add a type (bytecode)
+    build - create new instance (codehash -> new address)
 
   make snektest helper
     _bind(typename, bytecode) - pretest setup, add the types for user
@@ -51,3 +51,6 @@ snek test
         - for each echo event, check events match
 ```
 
+### Installation
+
+Requires [vyper](https://github.com/vyperlang/vyper) to be [installed](https://vyper.readthedocs.io/en/latest/installing-vyper.html).

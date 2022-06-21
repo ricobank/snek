@@ -1,0 +1,32 @@
+{
+  "name": "snek",
+  "version": "0.0.1",
+  "description": "snek",
+  "main": "index.js",
+  "scripts": {
+    "initialize": "npm i && npm run download-submodules && npm run install-submodules",
+    "download-submodules": "git submodule update --init --recursive --remote",
+    "install-submodules": "npm run init:multifab",
+    "init:multifab": "cd lib/multifab && npm i && npm run test",
+    "test": "cd test && node ../index.js test",
+    "test-snek": "npx mocha test test/snek"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricobank/snek.git"
+  },
+  "author": "",
+  "license": "",
+  "homepage": "https://github.com/ricobank/snek#readme",
+  "dependencies": {
+    "@etherpacks/dpack": "^0.0.29",
+    "chalk": "^4.1.2",
+    "commander": "^9.3.0",
+    "ethers": "^5.6.8",
+    "ganache": "^7.2.0",
+    "minihat": "^0.0.6"
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.1.1"
+  }
+}
