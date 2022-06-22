@@ -29,19 +29,19 @@ interface Multifab:
     def build(hash :bytes32, args :Bytes[20000000]) -> address:
         nonpayable
 
-
 event Echo:
     target: indexed(address)
-
 
 fab: Multifab
 types: public(HashMap[String[32], bytes32])
 objects: public(HashMap[String[32], address])
+seed: bytes32
 
 @external
-def __init__(fab :address):
+def __init__(fab :address, seed :bytes32):
     """ fab is a multifab initialized with types from this snek project """
     self.fab = Multifab(fab)
+    self.seed = seed
 
 @external
 def _bind(typename :String[32], _hash :bytes32):
@@ -73,3 +73,8 @@ def echo(target :address):
         will assert that the first 2 events fired from target will be Mint and Burn
 	"""
     log Echo(target)
+
+@external
+def rand(stop: uint256) -> uint256:
+    self.seed = keccak256(self.seed)
+    return convert(self.seed, uint256) % stop

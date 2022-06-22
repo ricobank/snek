@@ -1,4 +1,6 @@
+const { randomBytes } = require('crypto')
 const { resolve } = require('path')
+
 const dpack = require('@etherpacks/dpack')
 const chalk = require('chalk')
 const ethers = require('ethers')
@@ -24,7 +26,7 @@ runner.run = async (output_dir) => {
     const snek_contract = Object.values(snek_output.contracts)[0]['snek']
     const snek_interface = new ethers.utils.Interface(snek_contract.abi)
     const snek_factory = new ethers.ContractFactory(snek_interface, snek_contract.evm.bytecode.object, signer)
-    const snek = await snek_factory.deploy(multifab.address)
+    const snek = await snek_factory.deploy(multifab.address, randomBytes(32))
 
     for ([contract_name, contract] of src_contracts) {
         const cache_tx = await send(multifab.cache, contract.evm.bytecode.object);
