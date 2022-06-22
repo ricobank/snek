@@ -1,6 +1,14 @@
 # SPDX-License-Identifier: AGPL-3.0
 # Adapted from https://github.com/ricobank/multifab/blob/main/core/test/person.sol
 
+event Birth:
+    date: indexed(uint256)
+
+
+event Alias:
+    nick: indexed(String[32])
+
+
 name :public(String[32])
 last :public(String[32])
 year :public(uint256)
@@ -16,8 +24,10 @@ def __init__(name :String[32], last :String[32], year :uint256):
 @external
 def set_name(_name :String[32]):
     self.name = _name
+    log Alias(self.name)
 
 
 @external
 def set_year(_year: uint256):
     self.year = _year
+    log Birth(self.year)

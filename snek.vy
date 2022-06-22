@@ -29,6 +29,11 @@ interface Multifab:
     def build(hash :bytes32, args :Bytes[20000000]) -> address:
         nonpayable
 
+
+event Echo:
+    target: indexed(address)
+
+
 fab: Multifab
 types: public(HashMap[String[32], bytes32])
 objects: public(HashMap[String[32], address])
@@ -60,11 +65,11 @@ def echo(target :address):
     """ assert next events from this contract are prefix of next events from target
 	    in other words:
 
-            echo(target)
+        echo(target)
 		Mint()
 		Burn()
 		target.mintburn()
 
         will assert that the first 2 events fired from target will be Mint and Burn
 	"""
-    pass
+    log Echo(target)
