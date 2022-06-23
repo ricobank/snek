@@ -3,7 +3,6 @@ interface Snek:
     def echo(target: address): nonpayable
     def rand(set: uint256) -> uint256: nonpayable
 
-
 interface Person:
     def set_name(_name: String[32]): nonpayable
     def set_year(_year: uint256): nonpayable
@@ -16,25 +15,21 @@ interface Person:
     def cash() -> uint256: view
     def toys() -> uint256: view
 
-
 MAX_REPS: constant(uint256) = 1000
 MAX_DRAW: constant(uint256) = 1000
 
 event Birth:
     date: indexed(uint256)
 
-
 event Alias:
     nick: indexed(String[32])
-
 
 prs1: public(Person)
 prs2: public(Person)
 snek: public(Snek)
 
-
 @external
-def __init__(_snek : Snek):
+def __init__(_snek: Snek):
     self.snek = _snek
     name: String[32] = 'ali'
     last: String[32] = 'bob'
@@ -43,22 +38,18 @@ def __init__(_snek : Snek):
     self.prs1 = Person(self.snek.make('Person', 'person1', args))
     self.prs2 = Person(self.snek.make('Person', 'person2', args))
 
-
 @external
 def test_name():
     assert self.prs1.name() == 'ali'
-
 
 @external
 def test_set_name():
     self.prs1.set_name('cat')
     assert self.prs1.name() == 'cat'
 
-
 @external
 def test_year():
     assert self.prs1.year() == 10
-
 
 @external
 def test_set_year():
@@ -66,7 +57,6 @@ def test_set_year():
     log Birth(20)
     self.prs1.set_year(20)
     assert self.prs1.year() == 20
-
 
 @external
 def test_events():
@@ -84,7 +74,6 @@ def test_events():
     self.prs2.set_year(40)
     self.prs2.set_year(50)
     self.prs2.set_name('eli')
-
 
 @external
 def test_fuzz(reps: uint256):
