@@ -87,8 +87,7 @@ def test_events():
 
 
 @external
-def test_fuzz():  # (reps: uint256)
-    reps: uint256 = 100  # could be input param
+def test_fuzz(reps: uint256):
     for i in range(MAX_REPS):
         if i > reps:
             break

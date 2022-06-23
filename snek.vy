@@ -24,9 +24,9 @@
 
 # https://github.com/ricobank/multifab
 interface Multifab:
-    def cache(code :Bytes[20000000]) -> bytes32:  # max size, typed as `bytes` in ABI
+    def cache(code: Bytes[20000000]) -> bytes32:  # max size, typed as `bytes` in ABI
         nonpayable
-    def build(hash :bytes32, args :Bytes[20000000]) -> address:
+    def build(hash: bytes32, args :Bytes[20000000]) -> address:
         nonpayable
 
 event Echo:
@@ -38,20 +38,20 @@ objects: public(HashMap[String[32], address])
 seed: bytes32
 
 @external
-def __init__(fab :address, seed :bytes32):
+def __init__(fab: address, seed: bytes32):
     """ fab is a multifab initialized with types from this snek project """
     self.fab = Multifab(fab)
     self.seed = seed
 
 @external
-def _bind(typename :String[32], _hash :bytes32):
+def _bind(typename: String[32], _hash: bytes32):
     """ _bind is called by this test framework to associate typenames with
         codehashes so that `snek.make` can use a string typename
     """
     self.types[typename] = _hash
 
 @external
-def make(typename :String[32], objectname :String[32], args :Bytes[3200]) -> address:
+def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> address:
     """ make calls `fab.build` with the right codehash based on typename,
         then it saves the object with the given objectname for reference
     """
@@ -61,7 +61,7 @@ def make(typename :String[32], objectname :String[32], args :Bytes[3200]) -> add
     return _object
 
 @external
-def echo(target :address):
+def echo(target: address):
     """ assert next events from this contract are prefix of next events from target
 	    in other words:
 
@@ -75,6 +75,6 @@ def echo(target :address):
     log Echo(target)
 
 @external
-def rand(stop: uint256) -> uint256:
+def rand(end: uint256) -> uint256:
     self.seed = keccak256(self.seed)
-    return convert(self.seed, uint256) % stop
+    return convert(self.seed, uint256) % end
