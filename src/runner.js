@@ -1,13 +1,15 @@
 const { resolve } = require('path')
+
 const dpack = require('@etherpacks/dpack')
 const chalk = require('chalk')
 const ethers = require('ethers')
 const ganache = require("ganache")
 const { send } = require('minihat')
+const gasLimit = 10_000_000_000
 module.exports = runner = {}
 
-runner.run = async (output_dir) => {
-    const options = { logging: { quiet: "true"}}
+runner.run = async (output_dir, seed, reps) => {
+    const options = { logging: { quiet: "true"}, gasLimit: gasLimit}
     const provider = new ethers.providers.Web3Provider(ganache.provider(options))
     const signer = provider.getSigner()
     const multifab_pack = require('../lib/multifab/pack/multifab_hardhat.dpack.json')
@@ -20,11 +22,13 @@ runner.run = async (output_dir) => {
     const tst_contracts = Object.values(tst_output.contracts).map(obj => strip_proto(obj))
 
     // Deploy Snek (should we just do this via multifab?)
+    const buff = Buffer.alloc(32)
+    buff.writeUInt32BE(seed, 0)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
     const snek_contract = Object.values(snek_output.contracts)[0]['snek']
     const snek_interface = new ethers.utils.Interface(snek_contract.abi)
     const snek_factory = new ethers.ContractFactory(snek_interface, snek_contract.evm.bytecode.object, signer)
-    const snek = await snek_factory.deploy(multifab.address)
+    const snek = await snek_factory.deploy(multifab.address, buff)
 
     for ([contract_name, contract] of src_contracts) {
         const cache_tx = await send(multifab.cache, contract.evm.bytecode.object);
@@ -42,7 +46,8 @@ runner.run = async (output_dir) => {
             if ('name' in func && func.name.startsWith('test')) {
                 try {
                     ran++
-                    const test_tx = await send(test[func.name])
+                    const args = func.inputs.length > 0 ? [test[func.name], reps] : [test[func.name]]
+                    const test_tx = await send(...args)
                     runner.scan(test_tx, snek.address)
                     passed++
                     console.log(`${contract_name}::${func.name} ${chalk.green('PASSED')}`)

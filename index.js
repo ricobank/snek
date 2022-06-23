@@ -20,7 +20,11 @@ program.command('test')
     .description('compile and test all vyper contracts in source and test folders')
     .argument('[src_path]', 'path to vyper source file(s) to compile', 'src/')
     .argument('[test_path]', 'path to test files', 'test/')
-    .action((src_path, test_path) => { test(src_path, test_path, program.opts().outputDir) })
+    .option("-s,--seed <uint32>", 'fuzzing PRNG seed', '0')
+    .option("-r,--reps <string>", 'fuzzing repetitions', '1')
+    .action((src_path, test_path, options) => {
+        test(src_path, test_path, program.opts().outputDir, options.seed, options.reps)
+    })
 
 program.command('help')
     .description('print a long help message with examples')
@@ -30,11 +34,11 @@ const make = (path, output_dir, output_id) => {
     vyper.compile(path, output_dir, output_id)
 }
 
-const test = (src_path, test_path, output_dir) => {
+const test = (src_path, test_path, output_dir, seed, reps) => {
     make(src_path, output_dir, 'Src')
     make(test_path, output_dir, 'Test')
     make(resolve(__dirname, './snek.vy'), output_dir, 'Snek')
-    runner.run(output_dir)
+    runner.run(output_dir, seed, reps)
 }
 
-program.parse();
+program.parse()
