@@ -3,14 +3,12 @@ const { resolve } = require('path')
 const dpack = require('@etherpacks/dpack')
 const chalk = require('chalk')
 const ethers = require('ethers')
-const ganache = require("ganache")
 const { send } = require('minihat')
-const gasLimit = 10_000_000_000
+
 module.exports = runner = {}
 
 runner.run = async (output_dir, seed, reps) => {
-    const options = { logging: { quiet: "true"}, gasLimit: gasLimit}
-    const provider = new ethers.providers.Web3Provider(ganache.provider(options))
+    const provider = new ethers.providers.JsonRpcProvider()
     const signer = provider.getSigner()
     const multifab_pack = require('../lib/multifab/pack/multifab_hardhat.dpack.json')
     const dapp = await dpack.load(multifab_pack, ethers, signer)

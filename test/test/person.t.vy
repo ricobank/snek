@@ -15,7 +15,7 @@ interface Person:
     def cash() -> uint256: view
     def toys() -> uint256: view
 
-MAX_REPS: constant(uint256) = 1000
+MAX_REPS: constant(uint256) = 100000
 MAX_DRAW: constant(uint256) = 1000
 
 event Birth:

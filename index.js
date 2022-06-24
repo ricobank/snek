@@ -1,9 +1,11 @@
 const { resolve } = require('path');
+
 const { Command } = require('commander')
 const program = new Command()
 
-const vyper = require('./src/vyper.js')
+const network = require('./src/network.js')
 const runner = require('./src/runner.js')
+const vyper = require('./src/vyper.js')
 
 program
     .name('snek')
@@ -34,11 +36,19 @@ const make = (path, output_dir, output_id) => {
     vyper.compile(path, output_dir, output_id)
 }
 
-const test = (src_path, test_path, output_dir, seed, reps) => {
-    make(src_path, output_dir, 'Src')
-    make(test_path, output_dir, 'Test')
-    make(resolve(__dirname, './snek.vy'), output_dir, 'Snek')
-    runner.run(output_dir, seed, reps)
+const test = async (src_path, test_path, output_dir, seed, reps) => {
+    network.start()
+    try {
+        make(src_path, output_dir, 'Src')
+        make(test_path, output_dir, 'Test')
+        make(resolve(__dirname, './snek.vy'), output_dir, 'Snek')
+        await network.ready()
+        await runner.run(output_dir, seed, reps)
+    } catch(e) {
+        console.log(e)
+    } finally {
+        network.exit()
+    }
 }
 
 program.parse()
