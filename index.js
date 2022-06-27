@@ -28,9 +28,10 @@ program.command('test')
         test(src_path, test_path, program.opts().outputDir, options.seed, options.reps)
     })
 
-program.command('help')
-    .description('print a long help message with examples')
-    .action(() => { console.log('snek uses vyper to compile contracts, you need to install it with pip first') })
+program.addHelpText('after', `
+Example calls:
+  $ snek make ./test/src --output-dir ./test/out
+  $ snek test ./test/src ./test/test --output-dir ./test/out --seed 123 --reps 100`)
 
 const make = (path, output_dir, output_id) => {
     vyper.compile(path, output_dir, output_id)
