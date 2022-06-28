@@ -9,9 +9,12 @@ correctly, and test invariants with very fast fuzzing.
 
 snek runs [Vyper](https://vyper.readthedocs.io/en/latest/installing-vyper.html) and
 [Anvil](https://github.com/foundry-rs/foundry/tree/master/anvil) as subprocesses and both need to be installed and
-added to your path for snek to run. For now snek is used by running index.js directly with node.js, this will soon
-change.
+added to your path for snek to run.
 
+For now snek can be run from source by running index.js directly with node.js, or run from binaries.
+To build, first clone this repo, $ npm run initialize, $ npm run build-general.
+The snek executable generated should then be placed somewhere on your path. If using linux you can use
+$ npm build-linux to install the executable in /usr/bin/local. Binaries are currently not served anywhere.
 
 ## usage
 
@@ -25,7 +28,36 @@ test contract which start with 'test'. The path for test files can be configured
 
 --seed can be used 
 
-To view help for snek or any subcommand run it with the --help option.
+To view help for snek or any subcommand run the command with the --help option.
+```
+Usage: snek [options] [command]
+
+vyper helper command
+
+Options:
+  -o,--output-dir <string>               directory to output compiled contracts to (default: "./out")
+  -V, --version                          output the version number
+  -h, --help                             display help for command
+
+Commands:
+  make [src_path]                        compile all vyper contracts in source folder
+  test [options] [src_path] [test_path]  compile and test all vyper contracts in source and test folders
+  help [command]                         display help for command
+
+Examples:
+
+- compiles all vyper files in ./src and stores the json output at ./out  
+  $ snek make
+  
+- compiles all vyper files in ./src and ./test, stores the json output at ./out, runs all tests in ./test with seed = 0 and reps = 1  
+  $ snek test
+    
+- compiles all vyper files in ./test/src and ./test/test, stores the json output at ./test/out  
+  $ snek make ./test/src --output-dir ./test/out
+
+- compiles all vyper files in ./test/src and ./test/test, stores the json output at ./test/out, runs all tests in ./test/test with seed = 123 and reps = 1000
+  $ snek test ./test/src ./test/test --output-dir ./test/out --seed 123 --reps 1000
+```
 
 ### networks
 When running snek you do not have to consider networks, snek will start up a test network for you. If you prefer
