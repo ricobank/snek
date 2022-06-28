@@ -29,9 +29,19 @@ program.command('test')
     })
 
 program.addHelpText('after', `
-Example calls:
+Examples:
+
+- compiles all vyper files in ./src and stores the json output at ./out  
+  $ snek make
+  
+- compiles all vyper files in ./src and ./test, stores the json output at ./out, runs all tests in ./test with seed = 0 and reps = 1  
+  $ snek test
+    
+- compiles all vyper files in ./test/src and ./test/test, stores the json output at ./test/out  
   $ snek make ./test/src --output-dir ./test/out
-  $ snek test ./test/src ./test/test --output-dir ./test/out --seed 123 --reps 100`)
+
+- compiles all vyper files in ./test/src and ./test/test, stores the json output at ./test/out, runs all tests in ./test/test with seed = 123 and reps = 1000
+  $ snek test ./test/src ./test/test --output-dir ./test/out --seed 123 --reps 1000`)
 
 const make = (path, output_dir, output_id) => {
     vyper.compile(path, output_dir, output_id)
