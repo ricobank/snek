@@ -9,7 +9,9 @@
     "install-submodules": "npm run init:multifab",
     "init:multifab": "cd lib/multifab && npm i && npm run test",
     "test": "cd test && node ../index.js test",
-    "test-snek": "npx mocha test test/snek"
+    "test-snek": "npx mocha test test/snek",
+    "build-general": "pkg -t node16 index.js --output snek",
+    "build-linux": "npm run build-general && sudo cp -f ./snek /usr/local/bin"
   },
   "repository": {
     "type": "git",
@@ -23,10 +25,10 @@
     "chalk": "^4.1.2",
     "commander": "^9.3.0",
     "ethers": "^5.6.8",
-    "ganache": "^7.2.0",
     "minihat": "^0.0.6"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1"
+    "@types/mocha": "^9.1.1",
+    "pkg": "^5.7.0"
   }
 }
