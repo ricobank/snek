@@ -10,8 +10,11 @@
     "init:multifab": "cd lib/multifab && npm i && npm run test",
     "test": "cd test && node ../index.js test",
     "test-snek": "npx mocha test test/snek",
-    "build-general": "pkg -t node16 index.js --output snek",
+    "build-general": "pkg -t node16 index.js --output snek --config package.json",
     "build-linux": "npm run build-general && sudo cp -f ./snek /usr/local/bin"
+  },
+  "pkg": {
+    "assets": "snek.vy"
   },
   "repository": {
     "type": "git",
