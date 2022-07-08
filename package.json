@@ -23,10 +23,10 @@
   "license": "",
   "homepage": "https://github.com/ricobank/snek#readme",
   "dependencies": {
-    "chalk": "^4.1.2",
     "commander": "^9.3.0",
     "ethers": "^5.6.8",
-    "minihat": "^0.0.6"
+    "minihat": "^0.0.6",
+    "tapzero": "^0.6.1"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",

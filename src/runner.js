@@ -1,8 +1,8 @@
 const { resolve } = require('path')
 
-const chalk = require('chalk')
 const ethers = require('ethers')
 const { send } = require('minihat')
+const { GLOBAL_TEST_RUNNER, test } = require('tapzero')
 
 const test_prefix = 'test'
 const fail_prefix = test_prefix + '_throw'
@@ -35,41 +35,43 @@ runner.run = async (output_dir, seed, reps, hiss) => {
         await send(snek._bind, contract_name, codehash)
     }
 
-    let ran = 0
-    let passed = 0
     for ([contract_name, contract] of tst_contracts) {
         const iface = new ethers.utils.Interface(contract.abi)
         const factory = new ethers.ContractFactory(iface, contract.evm.bytecode.object, signer)
-        const test = await factory.deploy(snek.address)
+        const suite = await factory.deploy(snek.address)
         for (const func of contract.abi) {
             if ('name' in func && func.name.startsWith(test_prefix)) {
-                const want_pass = !func.name.startsWith(fail_prefix)
-                let error
-                try {
-                    ran++
-                    const args = func.inputs.length > 0 ? [test[func.name], reps] : [test[func.name]]
-                    const test_tx = await send(...args, {gasLimit: 100000000})
-                    runner.scan(test_tx, snek.address, hiss)
-                } catch (e) {
-                    error = e
-                }
-
-                if (want_pass === (typeof error === 'undefined')) {
-                    passed++
-                    console.log(`${contract_name}::${func.name} ${chalk.green('PASSED')}`)
-                } else {
-                    console.log(`${contract_name}::${func.name} ${chalk.red('FAILED')}`,)
-                    if(typeof error === 'undefined') {
-                        console.error('No exception')
-                    } else {
-                        console.error(error)
-                    }
-                }
+                const exec = runner.exec.bind(null, func, suite, reps, snek, hiss, contract_name)
+                await test(func.name, exec)
             }
         }
     }
-    const format = ran === passed ? chalk.green : chalk.red
-    console.log(`Passed ${format(`${passed}/${ran}`)}`)
+
+    while (!GLOBAL_TEST_RUNNER.completed) {
+        await new Promise(resolve => setTimeout(resolve, 10))
+    }
+}
+
+runner.exec = async (func, suite, reps, snek, hiss, contract_name, t) => {
+    const want_pass = !func.name.startsWith(fail_prefix)
+    let error
+    try {
+        const args = func.inputs.length > 0 ? [suite[func.name], reps] : [suite[func.name]]
+        const test_tx = await send(...args, {gasLimit: 100000000})
+        runner.scan(test_tx, snek.address, hiss)
+    } catch (e) {
+        error = e
+    }
+
+    if (want_pass === (typeof error === 'undefined')) {
+        t.ok(true, `${contract_name}::${func.name}`)
+    } else {
+        let err_msg = error
+        if(typeof error === 'undefined') {
+            err_msg = 'No exception'
+        }
+        t.fail(err_msg)
+    }
 }
 
 runner.scan = (test_tx, snek_addr, hiss) => {

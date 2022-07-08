@@ -1,5 +1,5 @@
-const { spawn } = require('node:child_process');
-const process = require("node:process");
+const { spawn } = require('node:child_process')
+const process = require("node:process")
 
 module.exports = network = {}
 
@@ -12,7 +12,6 @@ network.start = () => {
 }
 
 network._stdout = (data) => {
-    // todo log content from vyper print() when it works
     if (network.pending
         && data
         && data.toString().includes("Listening on")) {
@@ -40,5 +39,5 @@ network.ready = async () => {
 
 network.exit = () => {
     network.anvil.kill()
-    process.exit(0);
+    process.exit(0)
 }
