@@ -24,8 +24,9 @@ program.command('test')
     .argument('[test_path]', 'path to test files', 'test/')
     .option("-s,--seed <uint32>", 'fuzzing PRNG seed', '0')
     .option("-r,--reps <string>", 'fuzzing repetitions', '1')
+    .option('-h, --hiss', 'print all events to console')
     .action((src_path, test_path, options) => {
-        test(src_path, test_path, program.opts().outputDir, options.seed, options.reps)
+        test(src_path, test_path, program.opts().outputDir, options.seed, options.reps, options.hiss)
     })
 
 program.addHelpText('after', `
@@ -47,14 +48,14 @@ const make = (path, output_dir, output_id) => {
     vyper.compile(path, output_dir, output_id)
 }
 
-const test = async (src_path, test_path, output_dir, seed, reps) => {
+const test = async (src_path, test_path, output_dir, seed, reps, hiss) => {
     network.start()
     try {
         make(src_path, output_dir, 'Src')
         make(test_path, output_dir, 'Test')
         make(resolve(__dirname, './snek.vy'), output_dir, 'Snek')
         await network.ready()
-        await runner.run(output_dir, seed, reps)
+        await runner.run(output_dir, seed, reps, hiss)
     } catch(e) {
         console.log(e)
     } finally {
