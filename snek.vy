@@ -55,8 +55,10 @@ def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> add
     """ make calls `fab.build` with the right codehash based on typename,
         then it saves the object with the given objectname for reference
     """
-    type_hash :bytes32 = self.types[typename]
-    _object :address = self.fab.build(type_hash, args)
+    type_hash: bytes32 = self.types[typename]
+    assert type_hash != empty(bytes32), 'unknown type'
+    _object: address = self.fab.build(type_hash, args)
+    assert _object != empty(address), 'failed to make type'
     self.objects[objectname] = _object
     return _object
 

@@ -5,9 +5,12 @@ const chalk = require('chalk')
 const ethers = require('ethers')
 const { send } = require('minihat')
 
+const test_prefix = 'test'
+const fail_prefix = test_prefix + '_throw'
+
 module.exports = runner = {}
 
-runner.run = async (output_dir, seed, reps) => {
+runner.run = async (output_dir, seed, reps, hiss) => {
     const provider = new ethers.providers.JsonRpcProvider()
     const signer = provider.getSigner()
     const multifab_pack = require('../lib/multifab/pack/multifab_hardhat.dpack.json')
@@ -41,17 +44,28 @@ runner.run = async (output_dir, seed, reps) => {
         const factory = new ethers.ContractFactory(iface, contract.evm.bytecode.object, signer)
         const test = await factory.deploy(snek.address)
         for (const func of contract.abi) {
-            if ('name' in func && func.name.startsWith('test')) {
+            if ('name' in func && func.name.startsWith(test_prefix)) {
+                const want_pass = !func.name.startsWith(fail_prefix)
+                let error
                 try {
                     ran++
                     const args = func.inputs.length > 0 ? [test[func.name], reps] : [test[func.name]]
-                    const test_tx = await send(...args)
-                    runner.scan(test_tx, snek.address)
+                    const test_tx = await send(...args, {gasLimit: 100000000})
+                    runner.scan(test_tx, snek.address, hiss)
+                } catch (e) {
+                    error = e
+                }
+
+                if (want_pass === (typeof error === 'undefined')) {
                     passed++
                     console.log(`${contract_name}::${func.name} ${chalk.green('PASSED')}`)
-                } catch (e) {
+                } else {
                     console.log(`${contract_name}::${func.name} ${chalk.red('FAILED')}`,)
-                    console.error(e)
+                    if(typeof error === 'undefined') {
+                        console.error('No exception')
+                    } else {
+                        console.error(error)
+                    }
                 }
             }
         }
@@ -60,7 +74,7 @@ runner.run = async (output_dir, seed, reps) => {
     console.log(`Passed ${format(`${passed}/${ran}`)}`)
 }
 
-runner.scan = (test_tx, snek_addr) => {
+runner.scan = (test_tx, snek_addr, hiss) => {
     const sent = []
     const addr_eq =(a1, a2)=> a1.slice(-40).toLowerCase() === a2.slice(-40).toLowerCase()
     let target = "0"
@@ -77,6 +91,7 @@ runner.scan = (test_tx, snek_addr) => {
                 sent.shift()
             }
         }
+        if (hiss) console.log(`${event.eventSignature}, topics: ${event.topics.slice(1)}, address: ${event.address}`)
     }
     if (sent.length != 0) throw `Missing ${sent[0].event} echo`
 }
