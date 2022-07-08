@@ -43,6 +43,10 @@ def test_name():
     assert self.prs1.name() == 'ali'
 
 @external
+def test_throw_name():
+    assert self.prs1.name() == 'bob'
+
+@external
 def test_set_name():
     self.prs1.set_name('cat')
     assert self.prs1.name() == 'cat'

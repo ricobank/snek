@@ -24,9 +24,8 @@ with command line arguments and will otherwise default to searching for contract
 ./out.
 
 '$ snek test' performs the above, and in addition also compiles all test contracts and runs all methods in every
-test contract which start with 'test'. The path for test files can be configured and is ./test by default.
-
---seed can be used 
+test contract which start with 'test'. Methods starting with 'test_throw' will pass in a snek test iff an exception is
+thrown. The path for test files can be configured and is ./test by default.
 
 To view help for snek or any subcommand run the command with the --help option.
 ```

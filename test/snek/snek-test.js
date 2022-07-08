@@ -22,7 +22,7 @@ describe('test snek', () => {
         const snek_output = require(`${dir}/SnekOutput.json`)
         const snek_contract = Object.values(snek_output.contracts)[0]['snek']
         const snek_factory = new ethers.ContractFactory(new ethers.utils.Interface(snek_contract.abi),
-                                                    snek_contract.evm.bytecode.object, signer)
+                                                        snek_contract.evm.bytecode.object, signer)
 
         snek = await snek_factory.deploy(multifab.address)
 
