@@ -1,14 +1,14 @@
 const fs = require('fs')
-const { want, send } = require('minihat');
-const dpack = require('@etherpacks/dpack')
-const ethers = require('ethers');
-const vyper = require('../../src/vyper.js');
+const { want, send } = require('minihat')
+const ethers = require('ethers')
+const vyper = require('../../src/vyper.js')
 const network = require('../../src/network.js')
 
 const dir = `${__dirname}/SnekTest`
 let snek
 let multifab
 let signer
+
 describe('test snek', () => {
     before(async() => {
         network.start()
@@ -16,9 +16,9 @@ describe('test snek', () => {
         vyper.compile('snek.vy', dir, 'Snek')
         const provider = new ethers.providers.JsonRpcProvider()
         signer = provider.getSigner()
-        const multifab_pack = require('../../lib/multifab/pack/multifab_hardhat.dpack.json')
-        const dapp = await dpack.load(multifab_pack, ethers, signer)
-        multifab = await dapp._types.Multifab.deploy()
+        const multifab_factory = ethers.ContractFactory.fromSolidity(
+            require('../../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), signer)
+        multifab = await multifab_factory.deploy()
 
         const snek_output = require(`${dir}/SnekOutput.json`)
         const snek_contract = Object.values(snek_output.contracts)[0]['snek']
@@ -39,7 +39,7 @@ describe('test snek', () => {
         vyper.compile('test/src/Person.vy', dir, 'Person')
         const person_output = require(`${dir}/PersonOutput.json`)
         const person_contract = Object.values(person_output.contracts)[0]['Person']
-        const cache_tx = await send(multifab.cache, person_contract.evm.bytecode.object);
+        const cache_tx = await send(multifab.cache, person_contract.evm.bytecode.object)
         const [, person_hash] = cache_tx.events.find(event => event.event === 'Added').args
         await snek._bind('Person', person_hash)
         want(await snek.types('Person')).to.eql(person_hash)
