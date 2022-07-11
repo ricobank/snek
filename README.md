@@ -1,10 +1,10 @@
-# snek -- the tiny vyper helper command
+# snek 🐍
 
-`snek` is small tool for writing vyper contracts.
+`snek` is small tool for writing vyper contracts. It does two basic things: build your contracts, and test them.
+
 You can write tests as vyper contracts, which run on an Anvil node for very quick test runs.
 Besides simple assertions, test contracts can also assert events are logged correctly and test invariants with fast fuzzing.
 You can use a javascript for situations where in-EVM tests are not sufficient.
-
 
 ## installation
 
@@ -13,9 +13,10 @@ You can use a javascript for situations where in-EVM tests are not sufficient.
 added to your path for snek to run.
 
 For now snek can be run from source by running index.js directly with node.js, or run from binaries.
-To build, first clone this repo, $ npm run initialize, $ npm run build-general.
-The snek executable generated should then be placed somewhere on your path. If using linux you can use
-$ npm build-linux to install the executable in /usr/bin/local. Binaries are currently not served anywhere.
+To build, first clone this repo, then run `npm run initialize` and `npm run build-general`.
+
+The snek executable generated should then be placed somewhere on your path.
+If using linux you can use `npm run build-linux` to install the executable in `/usr/bin/local`.
 
 ## usage
 
@@ -28,7 +29,6 @@ default to searching for contracts in ./src and will save the output to `./out`.
 `snek test` performs the above, and in addition also compiles all test contracts and runs all methods in every
 test contract which start with `test`. Methods starting with 'test_throw' will pass in a snek test iff an exception is
 thrown. The path for test files can be configured and is `./test` by default.
-
 
 To view help for snek or any subcommand run the command with the --help option.
 
