@@ -2,18 +2,19 @@ const fs = require('fs')
 const { want, send } = require('minihat');
 const dpack = require('@etherpacks/dpack')
 const ethers = require('ethers');
-const ganache = require("ganache")
 const vyper = require('../../src/vyper.js');
+const network = require('../../src/network.js')
 
 const dir = `${__dirname}/SnekTest`
 let snek
 let multifab
 let signer
-
 describe('test snek', () => {
     before(async() => {
+        network.start()
+        await network.ready()
         vyper.compile('snek.vy', dir, 'Snek')
-        const provider = new ethers.providers.Web3Provider(ganache.provider())
+        const provider = new ethers.providers.JsonRpcProvider()
         signer = provider.getSigner()
         const multifab_pack = require('../../lib/multifab/pack/multifab_hardhat.dpack.json')
         const dapp = await dpack.load(multifab_pack, ethers, signer)
@@ -24,8 +25,7 @@ describe('test snek', () => {
         const snek_factory = new ethers.ContractFactory(new ethers.utils.Interface(snek_contract.abi),
                                                         snek_contract.evm.bytecode.object, signer)
 
-        snek = await snek_factory.deploy(multifab.address)
-
+        snek = await snek_factory.deploy(multifab.address, Buffer.alloc(32))
     })
 
     it('should bind hash correctly', async() => {
@@ -53,7 +53,8 @@ describe('test snek', () => {
         want(parseInt(await person.year())).to.eql(2022)
     })
 
-    after(() => {
+    after(async() => {
         fs.rmSync(dir, {recursive: true, force: true})
+        network.exit()
     })
 })
