@@ -1,6 +1,5 @@
 const { resolve } = require('path')
 
-const dpack = require('@etherpacks/dpack')
 const chalk = require('chalk')
 const ethers = require('ethers')
 const { send } = require('minihat')
@@ -13,16 +12,15 @@ module.exports = runner = {}
 runner.run = async (output_dir, seed, reps, hiss) => {
     const provider = new ethers.providers.JsonRpcProvider()
     const signer = provider.getSigner()
-    const multifab_pack = require('../lib/multifab/pack/multifab_hardhat.dpack.json')
-    const dapp = await dpack.load(multifab_pack, ethers, signer)
-    const multifab = await dapp._types.Multifab.deploy()
+    const multifab_factory = ethers.ContractFactory.fromSolidity(
+        require('../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), signer)
+    const multifab = await multifab_factory.deploy()
     const src_output = require(resolve(`${output_dir}/SrcOutput.json`))
     const tst_output = require(resolve(`${output_dir}/TestOutput.json`))
     const strip_proto = obj => Object.entries(obj)[0]
     const src_contracts = Object.values(src_output.contracts).map(obj => strip_proto(obj))
     const tst_contracts = Object.values(tst_output.contracts).map(obj => strip_proto(obj))
 
-    // Deploy Snek (should we just do this via multifab?)
     const buff = Buffer.alloc(32)
     buff.writeUInt32BE(seed, 0)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))

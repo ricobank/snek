@@ -6,8 +6,7 @@
   "scripts": {
     "initialize": "npm i && npm run download-submodules && npm run install-submodules",
     "download-submodules": "git submodule update --init --recursive --remote",
-    "install-submodules": "npm run init:multifab",
-    "init:multifab": "cd lib/multifab && npm i && npm run test",
+    "install-submodules": "cd lib/multifab && npm i && npm run pretest",
     "test": "cd test && node ../index.js test",
     "test-snek": "npx mocha test test/snek",
     "build-general": "pkg -t node16 index.js --output snek --config package.json",
@@ -24,7 +23,6 @@
   "license": "",
   "homepage": "https://github.com/ricobank/snek#readme",
   "dependencies": {
-    "@etherpacks/dpack": "^0.0.29",
     "chalk": "^4.1.2",
     "commander": "^9.3.0",
     "ethers": "^5.6.8",
