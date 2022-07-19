@@ -10,7 +10,7 @@ const fail_prefix = test_prefix + '_throw'
 module.exports = runner = {}
 
 runner.run = async (output_dir, seed, reps, hiss) => {
-    const provider = new ethers.providers.JsonRpcProvider()
+    const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545")
     const signer = provider.getSigner()
     const multifab_factory = ethers.ContractFactory.fromSolidity(
         require('../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), signer)
@@ -25,8 +25,7 @@ runner.run = async (output_dir, seed, reps, hiss) => {
     buff.writeUInt32BE(seed, 0)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
     const snek_contract = Object.values(snek_output.contracts)[0]['snek']
-    const snek_interface = new ethers.utils.Interface(snek_contract.abi)
-    const snek_factory = new ethers.ContractFactory(snek_interface, snek_contract.evm.bytecode.object, signer)
+    const snek_factory = new ethers.ContractFactory(snek_contract.abi, snek_contract.evm.bytecode.object, signer)
     const snek = await snek_factory.deploy(multifab.address, buff)
 
     for ([contract_name, contract] of src_contracts) {
@@ -38,8 +37,7 @@ runner.run = async (output_dir, seed, reps, hiss) => {
     let ran = 0
     let passed = 0
     for ([contract_name, contract] of tst_contracts) {
-        const iface = new ethers.utils.Interface(contract.abi)
-        const factory = new ethers.ContractFactory(iface, contract.evm.bytecode.object, signer)
+        const factory = new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signer)
         const test = await factory.deploy(snek.address)
         for (const func of contract.abi) {
             if ('name' in func && func.name.startsWith(test_prefix)) {

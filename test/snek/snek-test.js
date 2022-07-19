@@ -14,7 +14,7 @@ describe('test snek', () => {
         network.start()
         await network.ready()
         vyper.compile('snek.vy', dir, 'Snek')
-        const provider = new ethers.providers.JsonRpcProvider()
+        const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545")
         signer = provider.getSigner()
         const multifab_factory = ethers.ContractFactory.fromSolidity(
             require('../../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), signer)
@@ -22,7 +22,7 @@ describe('test snek', () => {
 
         const snek_output = require(`${dir}/SnekOutput.json`)
         const snek_contract = Object.values(snek_output.contracts)[0]['snek']
-        const snek_factory = new ethers.ContractFactory(new ethers.utils.Interface(snek_contract.abi),
+        const snek_factory = new ethers.ContractFactory(snek_contract.abi,
                                                         snek_contract.evm.bytecode.object, signer)
 
         snek = await snek_factory.deploy(multifab.address, Buffer.alloc(32))
