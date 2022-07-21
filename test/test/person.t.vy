@@ -40,27 +40,27 @@ def __init__(_snek: Snek):
 
 @external
 def test_name():
-    assert self.prs1.name() == 'ali'
+    assert self.prs1.name() == 'ali', 'unexpected prs1 name'
 
 @external
 def test_throw_name():
-    assert self.prs1.name() == 'bob'
+    assert self.prs1.name() == 'bob', 'correct exception'
 
 @external
 def test_set_name():
     self.prs1.set_name('cat')
-    assert self.prs1.name() == 'cat'
+    assert self.prs1.name() == 'cat', 'setting name failed'
 
 @external
 def test_year():
-    assert self.prs1.year() == 10
+    assert self.prs1.year() == 10, 'unexpected prs1 year'
 
 @external
 def test_set_year():
     self.snek.echo(self.prs1.address)
     log Birth(20)
     self.prs1.set_year(20)
-    assert self.prs1.year() == 20
+    assert self.prs1.year() == 20, 'setting year failed'
 
 @external
 def test_events():
@@ -92,4 +92,4 @@ def test_fuzz(reps: uint256):
         elif opt == 2:
             self.prs1.shop(self.snek.rand(self.prs1.cash() + 1))
         
-        assert self.prs1.debt() == self.prs1.cash() + self.prs1.toys()
+        assert self.prs1.debt() == self.prs1.cash() + self.prs1.toys(), 'debt invariant broken'

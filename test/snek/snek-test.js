@@ -1,60 +1,29 @@
-const fs = require('fs')
-const { want, send } = require('minihat')
+const { send } = require('minihat')
 const ethers = require('ethers')
 const vyper = require('../../src/vyper.js')
-const network = require('../../src/network.js')
+const TestHarness = require('./test-harness')
 
-const dir = `${__dirname}/SnekTest`
-let snek
-let multifab
-let signer
+TestHarness.test('should bind hash correctly', async (harness, assert) => {
+    const test_type = "test_type"
+    const test_hash = ethers.utils.formatBytes32String("testhash")
+    await harness.snek._bind(test_type, test_hash)
+    assert.equal(await harness.snek.types(test_type), test_hash)
+})
 
-describe('test snek', () => {
-    before(async() => {
-        network.start()
-        await network.ready()
-        vyper.compile('snek.vy', dir, 'Snek')
-        const provider = new ethers.providers.JsonRpcProvider()
-        signer = provider.getSigner()
-        const multifab_factory = ethers.ContractFactory.fromSolidity(
-            require('../../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), signer)
-        multifab = await multifab_factory.deploy()
+TestHarness.test('should be able to make an object', async (harness, assert) => {
+    vyper.compile('test/src/Person.vy', harness.dir, 'Person')
+    const person_output = require(`${harness.dir}/PersonOutput.json`)
+    const person_contract = Object.values(person_output.contracts)[0]['Person']
+    const cache_tx = await send(harness.multifab.cache, person_contract.evm.bytecode.object)
+    const [, person_hash] = cache_tx.events.find(event => event.event === 'Added').args
+    await harness.snek._bind('Person', person_hash)
+    assert.equal(await harness.snek.types('Person'), person_hash)
 
-        const snek_output = require(`${dir}/SnekOutput.json`)
-        const snek_contract = Object.values(snek_output.contracts)[0]['snek']
-        const snek_factory = new ethers.ContractFactory(new ethers.utils.Interface(snek_contract.abi),
-                                                        snek_contract.evm.bytecode.object, signer)
-
-        snek = await snek_factory.deploy(multifab.address, Buffer.alloc(32))
-    })
-
-    it('should bind hash correctly', async() => {
-        const test_type = "test_type"
-        const test_hash = ethers.utils.formatBytes32String("testhash")
-        await snek._bind(test_type, test_hash)
-        want(await snek.types(test_type)).to.eql(test_hash)
-    })
-
-    it('should be able to make an object', async() => {
-        vyper.compile('test/src/Person.vy', dir, 'Person')
-        const person_output = require(`${dir}/PersonOutput.json`)
-        const person_contract = Object.values(person_output.contracts)[0]['Person']
-        const cache_tx = await send(multifab.cache, person_contract.evm.bytecode.object)
-        const [, person_hash] = cache_tx.events.find(event => event.event === 'Added').args
-        await snek._bind('Person', person_hash)
-        want(await snek.types('Person')).to.eql(person_hash)
-
-        const person_args = ethers.utils.defaultAbiCoder.encode(['string', 'string', 'uint256'], ["Rico", "Bank", 2022])
-        await send(snek.make, 'Person', 'person1', person_args)
-        const person_address = await snek.objects('person1')
-        const person = new ethers.Contract(person_address, person_contract.abi, signer)
-        want(await person.name()).to.eql("Rico")
-        want(await person.last()).to.eql("Bank")
-        want(parseInt(await person.year())).to.eql(2022)
-    })
-
-    after(async() => {
-        fs.rmSync(dir, {recursive: true, force: true})
-        network.exit()
-    })
+    const person_args = ethers.utils.defaultAbiCoder.encode(['string', 'string', 'uint256'], ["Rico", "Bank", 2022])
+    await send(harness.snek.make, 'Person', 'person1', person_args)
+    const person_address = await harness.snek.objects('person1')
+    const person = new ethers.Contract(person_address, person_contract.abi, harness.signer)
+    assert.equal(await person.name(), "Rico")
+    assert.equal(await person.last(), "Bank")
+    assert.equal(parseInt(await person.year()), 2022)
 })

@@ -7,8 +7,8 @@
     "initialize": "npm i && npm run download-submodules && npm run install-submodules",
     "download-submodules": "git submodule update --init --recursive --remote",
     "install-submodules": "cd lib/multifab && npm i && npm run pretest",
-    "test": "cd test && node ../index.js test",
-    "test-snek": "npx mocha test test/snek",
+    "test-int": "cd test && node ../index.js test",
+    "test-unit": "node test/snek/snek-test.js",
     "build-general": "pkg -t node16 index.js --output snek --config package.json",
     "build-linux": "npm run build-general && sudo cp -f ./snek /usr/local/bin"
   },
@@ -29,7 +29,6 @@
     "tapzero": "^0.6.1"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
     "pkg": "^5.7.0"
   }
 }

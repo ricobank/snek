@@ -25,8 +25,7 @@ runner.run = async (output_dir, seed, reps, hiss) => {
     buff.writeUInt32BE(seed, 0)
     const snek_output = require(resolve(`${output_dir}/SnekOutput.json`))
     const snek_contract = Object.values(snek_output.contracts)[0]['snek']
-    const snek_interface = new ethers.utils.Interface(snek_contract.abi)
-    const snek_factory = new ethers.ContractFactory(snek_interface, snek_contract.evm.bytecode.object, signer)
+    const snek_factory = new ethers.ContractFactory(snek_contract.abi, snek_contract.evm.bytecode.object, signer)
     const snek = await snek_factory.deploy(multifab.address, buff)
 
     for ([contract_name, contract] of src_contracts) {
@@ -36,8 +35,7 @@ runner.run = async (output_dir, seed, reps, hiss) => {
     }
 
     for ([contract_name, contract] of tst_contracts) {
-        const iface = new ethers.utils.Interface(contract.abi)
-        const factory = new ethers.ContractFactory(iface, contract.evm.bytecode.object, signer)
+        const factory = new ethers.ContractFactory(contract.abi, contract.evm.bytecode.object, signer)
         const suite = await factory.deploy(snek.address)
         for (const func of contract.abi) {
             if ('name' in func && func.name.startsWith(test_prefix)) {
@@ -47,6 +45,7 @@ runner.run = async (output_dir, seed, reps, hiss) => {
         }
     }
 
+    // let tapzero clear test task queue, otherwise snek will tear down network early
     while (!GLOBAL_TEST_RUNNER.completed) {
         await new Promise(resolve => setTimeout(resolve, 10))
     }
@@ -66,9 +65,10 @@ runner.exec = async (func, suite, reps, snek, hiss, contract_name, t) => {
     if (want_pass === (typeof error === 'undefined')) {
         t.ok(true, `${contract_name}::${func.name}`)
     } else {
-        let err_msg = error
-        if(typeof error === 'undefined') {
-            err_msg = 'No exception'
+        let err_msg = 'Missing exception'
+        if(typeof error !== 'undefined') {
+            let code = await suite.provider.call(error.transaction, error.transaction.blockNumber)
+            err_msg = ethers.utils.toUtf8String('0x' + code.slice(138))
         }
         t.fail(err_msg)
     }
