@@ -47,6 +47,7 @@ runner.run = async (output_dir, seed, reps, hiss) => {
         }
     }
 
+    // let tapzero clear test task queue, otherwise snek will tear down network early
     while (!GLOBAL_TEST_RUNNER.completed) {
         await new Promise(resolve => setTimeout(resolve, 10))
     }
