@@ -22,4 +22,4 @@ def __init__(_snek: Snek):
 @external
 def test_grow():
     self.sean.grow()
-    assert self.sean.size() == 11, 'size not equal'
+    assert self.sean.size() == 11, 'unexpected size after grow'
