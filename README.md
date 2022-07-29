@@ -22,7 +22,7 @@ If using linux you can use `npm run build-linux` to install the executable in `/
 
 ### commands
 
-`snek make` compiles all Vyper contracts in the source directory.
+`snek make` compiles all Vyper contracts in the source and subdirectories.
 Paths can be configured with command line arguments and will otherwise
 default to searching for contracts in ./src and will save the output to `./out`.
 
