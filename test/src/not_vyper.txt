@@ -1,0 +1,1 @@
+snek make should handle non vyper files in src dir

@@ -1,4 +1,4 @@
-# tiny extra test to ensure snek works with multiple contracts
+# extra test to ensure snek works with multiple contracts at same level and recursively
 
 interface Snek:
     def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> address: nonpayable
@@ -9,7 +9,12 @@ interface Snake:
     def grow(): nonpayable
     def size() -> uint256: view
 
+interface Hydra:
+    def grow(): nonpayable
+    def size() -> uint256: view
+
 sean: public(Snake)
+stan: public(Hydra)
 snek: public(Snek)
 
 @external
@@ -18,6 +23,7 @@ def __init__(_snek: Snek):
     args: Bytes[32] = _abi_encode(size)
     self.snek = _snek
     self.sean = Snake(self.snek.make('Snake', 'snake1', args))
+    self.stan = Hydra(self.snek.make('Hydra', 'hydra2', args))
 
 @external
 def test_grow():
