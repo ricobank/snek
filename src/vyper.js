@@ -1,7 +1,7 @@
 const execSync = require('node:child_process').execSync
 const process = require('node:process')
 const fs = require('fs')
-const path = require('path');
+const path = require('path')
 
 module.exports = vy = {}
 

@@ -20,9 +20,9 @@ TestHarness.test('should be able to make an object', async (harness, assert) => 
     assert.equal(await harness.snek.types('Person'), person_hash)
 
     const person_args = ethers.utils.defaultAbiCoder.encode(['string', 'string', 'uint256'], ["Rico", "Bank", 2022])
-    await send(harness.snek.make, 'Person', 'person1', person_args)
-    const person_address = await harness.snek.objects('person1')
-    const person = new ethers.Contract(person_address, person_contract.abi, harness.signer)
+    const receipt = await send(harness.snek.make, 'Person', person_args)
+    const [, , person_address ] = receipt.events.find(event => event.address === harness.multifab.address).topics
+    const person = new ethers.Contract('0x' + person_address.slice(2 + 12*2), person_contract.abi, harness.signer)
     assert.equal(await person.name(), "Rico")
     assert.equal(await person.last(), "Bank")
     assert.equal(parseInt(await person.year()), 2022)

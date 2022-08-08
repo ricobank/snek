@@ -34,7 +34,6 @@ event Echo:
 
 fab: Multifab
 types: public(HashMap[String[32], bytes32])
-objects: public(HashMap[String[32], address])
 seed: bytes32
 
 @external
@@ -51,7 +50,7 @@ def _bind(typename: String[32], _hash: bytes32):
     self.types[typename] = _hash
 
 @external
-def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> address:
+def make(typename: String[32], args: Bytes[3200]) -> address:
     """ make calls `fab.build` with the right codehash based on typename,
         then it saves the object with the given objectname for reference
     """
@@ -59,7 +58,6 @@ def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> add
     assert type_hash != empty(bytes32), 'unknown type'
     _object: address = self.fab.build(type_hash, args)
     assert _object != empty(address), 'failed to make type'
-    self.objects[objectname] = _object
     return _object
 
 @external
