@@ -1,5 +1,5 @@
 interface Snek:
-    def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> address: nonpayable
+    def make(typename: String[32], args: Bytes[3200]) -> address: nonpayable
     def echo(target: address): nonpayable
     def rand(set: uint256) -> uint256: nonpayable
 
@@ -35,8 +35,8 @@ def __init__(_snek: Snek):
     last: String[32] = 'bob'
     year: uint256 = 10
     args: Bytes[224] = _abi_encode(name, last, year)
-    self.prs1 = Person(self.snek.make('Person', 'person1', args))
-    self.prs2 = Person(self.snek.make('Person', 'person2', args))
+    self.prs1 = Person(self.snek.make('Person', args))
+    self.prs2 = Person(self.snek.make('Person', args))
 
 @external
 def test_name():

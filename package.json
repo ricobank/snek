@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "initialize": "npm i && npm run download-submodules && npm run install-submodules",
-    "download-submodules": "git submodule update --init --recursive --remote",
+    "download-submodules": "git submodule update --init --recursive",
     "install-submodules": "cd lib/multifab && npm i && npm run pretest",
     "test-int": "cd test && node ../index.js test",
     "test-unit": "node test/snek/snek-test.js",

@@ -1,7 +1,7 @@
 # extra test to ensure snek works with multiple contracts at same level and recursively
 
 interface Snek:
-    def make(typename: String[32], objectname: String[32], args: Bytes[3200]) -> address: nonpayable
+    def make(typename: String[32], args: Bytes[3200]) -> address: nonpayable
     def echo(target: address): nonpayable
     def rand(set: uint256) -> uint256: nonpayable
 
@@ -22,8 +22,8 @@ def __init__(_snek: Snek):
     size: uint256 = 10
     args: Bytes[32] = _abi_encode(size)
     self.snek = _snek
-    self.sean = Snake(self.snek.make('Snake', 'snake1', args))
-    self.stan = Hydra(self.snek.make('Hydra', 'hydra2', args))
+    self.sean = Snake(self.snek.make('Snake', args))
+    self.stan = Hydra(self.snek.make('Hydra', args))
 
 @external
 def test_grow():

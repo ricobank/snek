@@ -6,7 +6,3 @@ size: public(uint256)
 @external
 def __init__(_size: uint256):
     self.size = _size
-
-@external
-def grow():
-    self.size += 1

@@ -18,15 +18,19 @@ class TestHarness {
             vars.dir = `${__dirname}/SnekTest`
             const provider = new ethers.providers.JsonRpcProvider()
             vars.signer = provider.getSigner()
+
             vyper.compile('snek.vy', vars.dir, 'Snek')
             const snek_output = require(`${vars.dir}/SnekOutput.json`)
             const snek_contract = Object.values(snek_output.contracts)[0]['snek']
             const snek_factory = new ethers.ContractFactory(
                 snek_contract.abi, snek_contract.evm.bytecode.object, vars.signer)
-            const multifab_factory = ethers.ContractFactory.fromSolidity(
-                require('../../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), vars.signer)
+
+            const mf_src_output = require(`../../lib/multifab/out/SrcOutput.json`)
+            const mf_contract = mf_src_output.contracts["src/Multifab.vy"].Multifab
+            const mf_factory = new ethers.ContractFactory(mf_contract.abi, mf_contract.evm.bytecode.object, vars.signer)
+
             await network.ready()
-            vars.multifab = await multifab_factory.deploy()
+            vars.multifab = await mf_factory.deploy()
             vars.snek = await snek_factory.deploy(vars.multifab.address, Buffer.alloc(32))
             vars.raw = false
         }
