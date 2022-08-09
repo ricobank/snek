@@ -4,6 +4,8 @@ const ethers = require('ethers')
 const { send } = require('minihat')
 const { GLOBAL_TEST_RUNNER, test } = require('tapzero')
 
+const bp = require('../lib/multifab/utils/blueprint.js')
+
 const test_prefix = 'test'
 const fail_prefix = test_prefix + '_throw'
 
@@ -12,9 +14,10 @@ module.exports = runner = {}
 runner.run = async (output_dir, seed, reps, hiss) => {
     const provider = new ethers.providers.JsonRpcProvider()
     const signer = provider.getSigner()
-    const multifab_factory = ethers.ContractFactory.fromSolidity(
-        require('../lib/multifab/artifacts/core/multifab.sol/Multifab.json'), signer)
-    const multifab = await multifab_factory.deploy()
+    const mf_src_output = require(`../lib/multifab/out/SrcOutput.json`)
+    const mf_contract = mf_src_output.contracts["src/Multifab.vy"].Multifab
+    const mf_factory = new ethers.ContractFactory(mf_contract.abi, mf_contract.evm.bytecode.object, signer)
+    const multifab = await mf_factory.deploy()
     const src_output = require(resolve(`${output_dir}/SrcOutput.json`))
     const tst_output = require(resolve(`${output_dir}/TestOutput.json`))
     const strip_proto = obj => Object.entries(obj)[0]
@@ -28,10 +31,12 @@ runner.run = async (output_dir, seed, reps, hiss) => {
     const snek_factory = new ethers.ContractFactory(snek_contract.abi, snek_contract.evm.bytecode.object, signer)
     const snek = await snek_factory.deploy(multifab.address, buff)
 
-    for ([contract_name, contract] of src_contracts) {
-        const cache_tx = await send(multifab.cache, contract.evm.bytecode.object);
-        [,codehash] = cache_tx.events.find(event => event.event === 'Added').args
-        await send(snek._bind, contract_name, codehash)
+    for ([contract_name, contract_data] of src_contracts) {
+        const blueprint = bp.generate(contract_data.evm.bytecode.object)
+        // can use empty array for blueprint abi, the inserted constructor needs no args
+        const factory = new ethers.ContractFactory([], blueprint, signer)
+        const contract = await factory.deploy()
+        await send(snek._bind, contract_name, contract.address)
     }
 
     for ([contract_name, contract] of tst_contracts) {

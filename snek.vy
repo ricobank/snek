@@ -24,16 +24,14 @@
 
 # https://github.com/ricobank/multifab
 interface Multifab:
-    def cache(code: Bytes[20000000]) -> bytes32:  # max size, typed as `bytes` in ABI
-        nonpayable
-    def build(hash: bytes32, args :Bytes[20000000]) -> address:
-        nonpayable
+    def build(blueprint: address, args: Bytes[4096]) -> address: nonpayable
+    def built(arg0: address) -> address: view
 
 event Echo:
     target: indexed(address)
 
 fab: Multifab
-types: public(HashMap[String[32], bytes32])
+types: public(HashMap[String[32], address])
 seed: bytes32
 
 @external
@@ -43,20 +41,20 @@ def __init__(fab: address, seed: bytes32):
     self.seed = seed
 
 @external
-def _bind(typename: String[32], _hash: bytes32):
+def _bind(typename: String[32], blueprint: address):
     """ _bind is called by this test framework to associate typenames with
         codehashes so that `snek.make` can use a string typename
     """
-    self.types[typename] = _hash
+    self.types[typename] = blueprint
 
 @external
 def make(typename: String[32], args: Bytes[3200]) -> address:
     """ make calls `fab.build` with the right codehash based on typename,
         then it saves the object with the given objectname for reference
     """
-    type_hash: bytes32 = self.types[typename]
-    assert type_hash != empty(bytes32), 'unknown type'
-    _object: address = self.fab.build(type_hash, args)
+    blueprint: address = self.types[typename]
+    assert blueprint != empty(address), 'unknown type'
+    _object: address = self.fab.build(blueprint, args)
     assert _object != empty(address), 'failed to make type'
     return _object
 
