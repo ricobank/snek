@@ -49,7 +49,8 @@ vy.compile = (path, outputDir, outputId) => {
     else throw `Invalid path ${path}. Path to contracts must be file or directory.`
 
     vy._generate_json(files, outputDir, outputId)
-    const std_out = execSync(`vyper-json ${outputDir}/${outputId}Input.json -o ${outputDir}/${outputId}Output.json`,
+    wd = process.cwd()
+    const std_out = execSync(`vyper-json ${outputDir}/${outputId}Input.json -o ${outputDir}/${outputId}Output.json -p ${wd}`,
                              {encoding: 'utf-8'})
     if (!std_out.startsWith('Results saved to ')) throw `vyper compile failed: ${std_out}`
     const out_path = std_out.split(' ').pop().trim()
