@@ -1,7 +1,7 @@
 const { send } = require('minihat')
 const ethers = require('ethers')
 
-const bp = require('../../src/blueprint.js')
+const bp = require('../../lib/multifab/utils/blueprint.js')
 const vyper = require('../../src/vyper.js')
 const TestHarness = require('./test-harness')
 
